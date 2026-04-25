@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Minus, Plus } from "lucide-react";
+import { Wallet, Minus, Plus } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import toast from "react-hot-toast";
 
@@ -28,26 +28,26 @@ export default function AddToCartButton({
     for (let i = 0; i < qty; i++) {
       addItem({ productId, title, price, qty: 1, image });
     }
-    toast.success(`${qty}x ${title} added to cart!`);
+    toast.success(`${qty}x ${title} added to your selection!`);
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3">
+    <div className="flex flex-col sm:flex-row gap-4">
       {/* Quantity selector */}
-      <div className="flex items-center rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]">
+      <div className="flex items-center rounded-2xl border border-[var(--card-border)] bg-[var(--surface-dark)] p-1 shrink-0">
         <button
           onClick={() => setQty((q) => Math.max(1, q - 1))}
-          className="flex h-12 w-12 items-center justify-center hover:bg-[var(--badge-bg)] transition-colors rounded-l-xl"
+          className="flex h-11 w-11 items-center justify-center hover:bg-white/5 transition-colors rounded-xl text-muted hover:text-white"
           disabled={qty <= 1}
         >
           <Minus className="h-4 w-4" />
         </button>
-        <span className="flex h-12 w-12 items-center justify-center text-sm font-semibold border-x border-[var(--card-border)]">
+        <span className="flex h-11 w-11 items-center justify-center text-sm font-black text-white">
           {qty}
         </span>
         <button
           onClick={() => setQty((q) => Math.min(stock, q + 1))}
-          className="flex h-12 w-12 items-center justify-center hover:bg-[var(--badge-bg)] transition-colors rounded-r-xl"
+          className="flex h-11 w-11 items-center justify-center hover:bg-white/5 transition-colors rounded-xl text-muted hover:text-white"
           disabled={qty >= stock}
         >
           <Plus className="h-4 w-4" />
@@ -58,10 +58,10 @@ export default function AddToCartButton({
       <button
         onClick={handleAdd}
         disabled={stock <= 0}
-        className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3 text-sm font-semibold text-white hover:bg-primary-dark transition-all btn-glow disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
+        className="flex-1 flex items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-xs font-black uppercase tracking-widest text-white hover:bg-primary-dark transition-all shadow-xl shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed group"
       >
-        <ShoppingCart className="h-4 w-4" />
-        {stock <= 0 ? "Out of Stock" : "Add to Cart"}
+        <Wallet className="h-4 w-4 group-hover:scale-110 transition-transform" />
+        {stock <= 0 ? "Out of Selection" : "Add to Wallet"}
       </button>
     </div>
   );

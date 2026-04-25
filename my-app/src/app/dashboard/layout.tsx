@@ -10,8 +10,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-[calc(100vh-64px)]">
-      <DashboardSidebar userName={session.user.name || "Seller"} userImage={session.user.image} />
-      <div className="flex-1 overflow-auto">
+      <DashboardSidebar userName={session.user.name || "Seller"} userImage={session.user.image} userRole={session.user.role} />
+      <div className="flex-1 overflow-auto bg-[var(--background)]">
         <div className="mx-auto max-w-6xl px-6 py-8">{children}</div>
       </div>
     </div>

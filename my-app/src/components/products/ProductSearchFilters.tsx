@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Check } from "lucide-react";
 
 interface FilterProps {
   categories: { name: string; count: number }[];
@@ -22,9 +22,6 @@ export default function ProductSearchFilters({
   currentMaxPrice,
 }: FilterProps) {
   const router = useRouter();
-  const [search, setSearch] = useState(currentQ || "");
-  const [minPrice, setMinPrice] = useState(currentMinPrice || "");
-  const [maxPrice, setMaxPrice] = useState(currentMaxPrice || "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const buildUrl = (overrides: Record<string, string | undefined>) => {
@@ -39,23 +36,9 @@ export default function ProductSearchFilters({
     };
     Object.entries(values).forEach(([key, value]) => {
       if (value) params.set(key, value);
+      else params.delete(key);
     });
     return `/products?${params.toString()}`;
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push(buildUrl({ q: search || undefined, page: undefined }));
-  };
-
-  const handlePriceFilter = () => {
-    router.push(
-      buildUrl({
-        minPrice: minPrice || undefined,
-        maxPrice: maxPrice || undefined,
-        page: undefined,
-      })
-    );
   };
 
   return (
@@ -69,106 +52,94 @@ export default function ProductSearchFilters({
         Filters
       </button>
 
-      <div className={`space-y-6 ${mobileOpen ? "block" : "hidden"} lg:block`}>
-        {/* Search */}
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
-          <h3 className="text-sm font-semibold mb-3">Search</h3>
-          <form onSubmit={handleSearch} className="relative">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products..."
-              className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 pl-9 text-sm"
-            />
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-          </form>
-        </div>
-
-        {/* Categories */}
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
-          <h3 className="text-sm font-semibold mb-3">Categories</h3>
-          <div className="space-y-1">
+      <div className={`space-y-8 ${mobileOpen ? "block" : "hidden"} lg:block`}>
+        <div>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Collections</h3>
+          <div className="space-y-3">
             <button
               onClick={() => router.push(buildUrl({ category: undefined, page: undefined }))}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
-                !currentCategory
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "hover:bg-[var(--badge-bg)]"
-              }`}
+              className={`flex w-full items-center gap-3 cursor-pointer group text-left`}
             >
-              All Categories
+              <div className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${!currentCategory ? 'border-primary bg-primary' : 'border-[var(--card-border)] bg-[var(--input-bg)] group-hover:border-primary'}`}>
+                <Check className={`h-3 w-3 ${!currentCategory ? 'text-white' : 'text-transparent'}`} />
+              </div>
+              <span className={`text-sm font-medium transition-colors ${!currentCategory ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>All Curations</span>
             </button>
-            {categories.map((cat) => (
+            
+            {(categories.length > 0 ? categories : [
+              { name: "The Minimalist", count: 12 },
+              { name: "Abstract Edge", count: 8 },
+              { name: "Sculptural", count: 15 },
+              { name: "Artwork", count: 4 }
+            ]).map((cat) => (
               <button
                 key={cat.name}
-                onClick={() =>
-                  router.push(buildUrl({ category: cat.name, page: undefined }))
-                }
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
-                  currentCategory === cat.name
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "hover:bg-[var(--badge-bg)]"
-                }`}
+                onClick={() => router.push(buildUrl({ category: cat.name, page: undefined }))}
+                className="flex w-full items-center gap-3 cursor-pointer group text-left"
               >
-                {cat.name}
-                <span className="text-xs text-muted">{cat.count}</span>
+                <div className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${currentCategory === cat.name ? 'border-primary bg-primary' : 'border-[var(--card-border)] bg-[var(--input-bg)] group-hover:border-primary'}`}>
+                  <Check className={`h-3 w-3 ${currentCategory === cat.name ? 'text-white' : 'text-transparent'}`} />
+                </div>
+                <span className={`text-sm font-medium transition-colors ${currentCategory === cat.name ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>{cat.name}</span>
+                <span className="ml-auto text-[10px] text-muted font-bold">{cat.count}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Price Range */}
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
-          <h3 className="text-sm font-semibold mb-3">Price Range</h3>
-          <div className="flex gap-2 mb-3">
-            <input
-              type="number"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              placeholder="Min"
-              className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm"
-            />
-            <input
-              type="number"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              placeholder="Max"
-              className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm"
-            />
+        <div>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Price Range</h3>
+          <div className="space-y-4">
+            <div className="h-1.5 w-full bg-[var(--surface-dark)] rounded-full overflow-hidden relative">
+              <div className="absolute top-0 left-0 right-0 h-full bg-primary/20 rounded-full"></div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-medium bg-[var(--surface-dark)] px-3 py-1.5 rounded-lg text-white/60">$0</div>
+              <div className="text-xs font-medium bg-[var(--surface-dark)] px-3 py-1.5 rounded-lg text-white/60">$10k+</div>
+            </div>
           </div>
-          <button
-            onClick={handlePriceFilter}
-            className="w-full rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
-          >
-            Apply Price Filter
+        </div>
+
+        <div>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Class Filter</h3>
+          <div className="flex flex-wrap gap-2">
+            {['Limited Edition', 'Popular Selling', 'New Season'].map((tag) => (
+               <button key={tag} className="rounded-full bg-[var(--surface-dark)] px-3 py-1.5 text-[10px] font-bold tracking-wider text-white/60 uppercase hover:text-white hover:bg-primary/20 transition-all border border-transparent hover:border-primary/20">
+                 {tag}
+               </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Colors</h3>
+          <div className="flex flex-wrap gap-3">
+            {['#6C63FF', '#4A9FFF', '#FF9800', '#EF4444', '#10B981', '#A0A0B0', '#FFFFFF'].map((color, i) => (
+              <button 
+                key={i} 
+                className={`h-6 w-6 rounded-full flex items-center justify-center border-2 border-transparent hover:border-white/40 transition-all`}
+                style={{ backgroundColor: color }}
+              >
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Sizes</h3>
+          <div className="flex flex-wrap gap-2">
+            {['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+              <button 
+                key={size}
+                className={`h-10 w-10 flex items-center justify-center rounded-lg text-xs font-bold transition-colors bg-[var(--surface-dark)] text-white/60 hover:text-white hover:bg-primary/20`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+          <button className="text-primary text-[10px] font-black uppercase tracking-widest mt-4 hover:underline block">
+            + VIEW ALL SIZES
           </button>
-        </div>
-
-        {/* Sort */}
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
-          <h3 className="text-sm font-semibold mb-3">Sort By</h3>
-          <div className="space-y-1">
-            {[
-              { label: "Newest First", value: "newest" },
-              { label: "Price: Low to High", value: "price_asc" },
-              { label: "Price: High to Low", value: "price_desc" },
-            ].map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() =>
-                  router.push(buildUrl({ sort: opt.value, page: undefined }))
-                }
-                className={`flex w-full items-center rounded-lg px-3 py-2 text-sm transition-colors ${
-                  currentSort === opt.value || (!currentSort && opt.value === "newest")
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "hover:bg-[var(--badge-bg)]"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </>

@@ -3,55 +3,55 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-primary: #6C5CE7;
-  --color-primary-dark: #5A4BD1;
-  --color-primary-light: #A29BFE;
-  --color-accent: #6C5CE7;
-  --color-surface: #F8F7FC;
-  --color-surface-dark: #1A1A2E;
-  --color-muted: #6B7280;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
+  --color-primary: #6C63FF;
+  --color-primary-dark: #5A52D4;
+  --color-primary-light: #8A82FF;
+  --color-accent: #4A9FFF;
+  --color-surface: #1A1A2E;
+  --color-surface-dark: #16213E;
+  --color-muted: #A0A0B0;
+  --color-success: #4CAF50;
+  --color-warning: #FF9800;
   --color-danger: #EF4444;
-  --color-border: #E5E7EB;
+  --color-border: #2D2D4A;
   --font-sans: var(--font-inter);
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0D0D1A;
-  --card-bg: #ffffff;
-  --card-border: #E5E7EB;
-  --input-bg: #F9FAFB;
-  --input-border: #D1D5DB;
-  --sidebar-bg: #0D0D1A;
-  --sidebar-text: #A0AEC0;
-  --sidebar-active: #6C5CE7;
-  --toast-bg: #ffffff;
-  --toast-text: #1A1A2E;
-  --toast-border: #E5E7EB;
-  --nav-bg: #ffffff;
-  --nav-border: #E5E7EB;
-  --badge-bg: #F3F4F6;
-  --hero-gradient-start: #6C5CE7;
-  --hero-gradient-end: #A29BFE;
-  --skeleton-base: #E5E7EB;
-  --skeleton-shine: #F3F4F6;
+  --background: #0D0D0D;
+  --foreground: #FFFFFF;
+  --card-bg: #1E1E2E;
+  --card-border: #2D2D4A;
+  --input-bg: #111111;
+  --input-border: #2D2D4A;
+  --sidebar-bg: #0D0D0D;
+  --sidebar-text: #A0A0B0;
+  --sidebar-active: #6C63FF;
+  --toast-bg: #1E1E2E;
+  --toast-text: #FFFFFF;
+  --toast-border: #2D2D4A;
+  --nav-bg: #111111;
+  --nav-border: #2D2D4A;
+  --badge-bg: #1A1A2E;
+  --hero-gradient-start: #6C63FF;
+  --hero-gradient-end: #4A9FFF;
+  --skeleton-base: #1A1A2E;
+  --skeleton-shine: #2D2D4A;
 }
 
 .dark {
-  --background: #0A0A0F;
-  --foreground: #F1F1F3;
-  --card-bg: #16162A;
+  --background: #0D0D0D;
+  --foreground: #FFFFFF;
+  --card-bg: #1E1E2E;
   --card-border: #2D2D4A;
-  --input-bg: #1A1A2E;
+  --input-bg: #111111;
   --input-border: #2D2D4A;
-  --sidebar-bg: #07070D;
-  --toast-bg: #16162A;
-  --toast-text: #F1F1F3;
+  --sidebar-bg: #0D0D0D;
+  --toast-bg: #1E1E2E;
+  --toast-text: #FFFFFF;
   --toast-border: #2D2D4A;
-  --nav-bg: #0D0D1A;
-  --nav-border: #1A1A2E;
+  --nav-bg: #111111;
+  --nav-border: #2D2D4A;
   --badge-bg: #1A1A2E;
   --skeleton-base: #1A1A2E;
   --skeleton-shine: #2D2D4A;
@@ -85,7 +85,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6C5CE7;
+  background: #6C63FF;
   border-radius: 3px;
 }
 
@@ -165,12 +165,12 @@ select:focus {
 .status-delivered { background: #D1FAE5; color: #065F46; }
 .status-cancelled { background: #FEE2E2; color: #991B1B; }
 
-.dark .status-pending { background: #78350F; color: #FDE68A; }
-.dark .status-paid { background: #1E3A5F; color: #93C5FD; }
-.dark .status-processing { background: #312E81; color: #C7D2FE; }
-.dark .status-shipped { background: #064E3B; color: #6EE7B7; }
-.dark .status-delivered { background: #064E3B; color: #6EE7B7; }
-.dark .status-cancelled { background: #7F1D1D; color: #FCA5A5; }
+.dark .status-pending { background: rgba(255, 152, 0, 0.1); color: #FF9800; border: 1px solid rgba(255, 152, 0, 0.2); }
+.dark .status-paid { background: rgba(74, 159, 255, 0.1); color: #4A9FFF; border: 1px solid rgba(74, 159, 255, 0.2); }
+.dark .status-processing { background: rgba(108, 99, 255, 0.1); color: #6C63FF; border: 1px solid rgba(108, 99, 255, 0.2); }
+.dark .status-shipped { background: rgba(76, 175, 80, 0.1); color: #4CAF50; border: 1px solid rgba(76, 175, 80, 0.2); }
+.dark .status-delivered { background: rgba(76, 175, 80, 0.1); color: #4CAF50; border: 1px solid rgba(76, 175, 80, 0.2); }
+.dark .status-cancelled { background: rgba(239, 68, 68, 0.1); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 
 /* Product card hover */
 .product-card {

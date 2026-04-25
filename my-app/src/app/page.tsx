@@ -16,6 +16,9 @@ import {
 import Footer from "@/components/layout/Footer";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getRecommendations } from "@/lib/recommendations";
 
 const CATEGORIES = [
   { name: "Electronics", icon: Cpu, color: "from-blue-500 to-indigo-600" },
@@ -40,7 +43,32 @@ async function getFeaturedProducts() {
 }
 
 export default async function HomePage() {
+  const session = await getServerSession(authOptions);
   const products = await getFeaturedProducts();
+
+  let recommendedProducts: any[] = [];
+  if (session?.user?.id) {
+    try {
+      const userOrders = await prisma.order.findMany({
+        where: { userId: session.user.id },
+        include: { items: { include: { product: { include: { category: true } } } } },
+      });
+
+      const purchasedCategories = [...new Set(userOrders.flatMap((o) => o.items.map((i) => i.product.category.name)))];
+      const purchasedTags = [...new Set(userOrders.flatMap((o) => o.items.flatMap((i) => i.product.tags)))];
+      const purchasedIds = new Set(userOrders.flatMap((o) => o.items.map((i) => i.productId)));
+
+      const allProducts = await prisma.product.findMany({
+        where: { isActive: true, stock: { gt: 0 }, id: { notIn: [...purchasedIds] } },
+        include: { category: true, reviews: true },
+      });
+
+      recommendedProducts = getRecommendations(purchasedCategories, purchasedTags, allProducts);
+    } catch {
+      // Ignore
+    }
+  }
+
 
   return (
     <>
@@ -182,6 +210,75 @@ export default async function HomePage() {
               return (
                 <Link key={product.id} href={`/products/${product.id}`} className="group">
                   <div className="product-card rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] overflow-hidden">
+                    <div className="relative aspect-square overflow-hidden bg-[var(--surface)]">
+                      <Image
+                        src={product.images[0] || "https://picsum.photos/400"}
+                        alt={product.title}
+                        fill
+                        className="product-image object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <p className="text-xs font-medium text-primary uppercase tracking-wider mb-1">
+                        {product.category.name}
+                      </p>
+                      <h3 className="text-sm font-semibold leading-tight mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                        {product.title}
+                      </h3>
+                      <div className="flex items-center justify-between">
+                        <p className="text-lg font-bold text-primary">
+                          {formatCurrency(product.price)}
+                        </p>
+                        {avgRating > 0 && (
+                          <div className="flex items-center gap-1">
+                            <Star className="h-3.5 w-3.5 fill-warning text-warning" />
+                            <span className="text-xs font-medium">{avgRating.toFixed(1)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* AI Recommendations */}
+      {session && recommendedProducts.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="h-6 w-6 text-primary" />
+                <h2 className="text-3xl font-bold">Recommended for You</h2>
+              </div>
+              <p className="text-muted">AI-powered suggestions based on your taste</p>
+            </div>
+            <Link
+              href="/products"
+              className="hidden sm:flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+            >
+              Explore More
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {recommendedProducts.map((product) => {
+              const avgRating =
+                product.reviews && product.reviews.length > 0
+                  ? product.reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / product.reviews.length
+                  : 0;
+              return (
+                <Link key={product.id} href={`/products/${product.id}`} className="group relative">
+                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary/30 to-primary-light/30 opacity-0 blur transition group-hover:opacity-100" />
+                  <div className="product-card relative rounded-xl border border-primary/20 bg-[var(--card-bg)] overflow-hidden">
+                    <div className="absolute top-3 left-3 z-10 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" />
+                      Top Match
+                    </div>
                     <div className="relative aspect-square overflow-hidden bg-[var(--surface)]">
                       <Image
                         src={product.images[0] || "https://picsum.photos/400"}

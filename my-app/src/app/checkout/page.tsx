@@ -10,11 +10,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
   CreditCard,
-  MapPin,
   ArrowLeft,
   Lock,
   Smartphone,
-  Banknote,
+  CheckCircle2,
+  MapPin,
+  Mail,
+  Wallet
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Footer from "@/components/layout/Footer";
@@ -51,14 +53,17 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        <h1 className="text-2xl font-bold mb-2">No items in cart</h1>
-        <p className="text-muted mb-6">Add some products before checking out.</p>
+      <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
+        <div className="h-20 w-20 rounded-full bg-[var(--surface-dark)] border border-[var(--card-border)] flex items-center justify-center mb-6">
+          <Wallet className="h-10 w-10 text-muted" />
+        </div>
+        <h1 className="text-3xl font-bold mb-3 text-white">Your Atelier is Empty</h1>
+        <p className="text-muted mb-8 max-w-sm leading-relaxed">Add some of our curated pieces to your selection before checking out.</p>
         <Link
           href="/products"
-          className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white"
+          className="rounded-xl bg-primary px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all"
         >
-          Browse Products
+          Explore Collections
         </Link>
       </div>
     );
@@ -92,7 +97,8 @@ export default function CheckoutPage() {
         address
       );
       clearCart();
-      toast.success("Order placed successfully!");
+      toast.success("Order confirmed!");
+      router.push("/dashboard/orders");
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Failed to place order";
       toast.error(errorMessage);
@@ -105,156 +111,150 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <Link
           href="/cart"
-          className="inline-flex items-center gap-1 text-sm text-muted hover:text-primary transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors mb-10"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3 w-3" />
           WALLET CHECKOUT
         </Link>
 
-        <h1 className="text-3xl font-bold mb-2">Complete Your Order</h1>
-        <p className="text-muted mb-8">
-          Review your curated selection and provide shipping details to finalize your experience.
-        </p>
+        <div className="mb-12">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white">Complete Your Order</h1>
+          <p className="text-muted text-sm max-w-xl leading-relaxed">
+            Review your curated selection and provide shipping details to finalize your experience.
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-12">
             {/* Left side - Forms */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-10">
               {/* Shipping Information */}
-              <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">
+              <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white text-sm font-black shadow-lg shadow-primary/20">
                     1
                   </div>
-                  <h2 className="text-lg font-bold">Shipping Information</h2>
+                  <h2 className="text-xl font-bold text-white">Shipping Information</h2>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid sm:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">
                       First Name
                     </label>
                     <input
                       type="text"
                       value={form.firstName}
                       onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      placeholder="John"
-                      className={`w-full rounded-lg border ${errors.firstName ? "border-danger" : "border-[var(--input-border)]"} bg-[var(--input-bg)] px-4 py-3 text-sm`}
+                      placeholder="Elena"
+                      className={`w-full rounded-xl border ${errors.firstName ? "border-danger" : "border-[var(--card-border)]"} bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-muted/40`}
                     />
-                    {errors.firstName && <p className="text-xs text-danger mt-1">{errors.firstName}</p>}
+                    {errors.firstName && <p className="text-[10px] font-bold text-danger mt-2 uppercase tracking-wide">{errors.firstName}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">
                       Last Name
                     </label>
                     <input
                       type="text"
                       value={form.lastName}
                       onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      placeholder="Doe"
-                      className={`w-full rounded-lg border ${errors.lastName ? "border-danger" : "border-[var(--input-border)]"} bg-[var(--input-bg)] px-4 py-3 text-sm`}
+                      placeholder="Rodriguez"
+                      className={`w-full rounded-xl border ${errors.lastName ? "border-danger" : "border-[var(--card-border)]"} bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-muted/40`}
                     />
-                    {errors.lastName && <p className="text-xs text-danger mt-1">{errors.lastName}</p>}
+                    {errors.lastName && <p className="text-[10px] font-bold text-danger mt-2 uppercase tracking-wide">{errors.lastName}</p>}
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+                <div className="mb-6">
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">
                     Delivery Address
                   </label>
-                  <input
-                    type="text"
-                    value={form.address}
-                    onChange={(e) => setForm({ ...form, address: e.target.value })}
-                    placeholder="1242 Order Way, Creative District"
-                    className={`w-full rounded-lg border ${errors.address ? "border-danger" : "border-[var(--input-border)]"} bg-[var(--input-bg)] px-4 py-3 text-sm`}
-                  />
-                  {errors.address && <p className="text-xs text-danger mt-1">{errors.address}</p>}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={form.address}
+                      onChange={(e) => setForm({ ...form, address: e.target.value })}
+                      placeholder="1242 Order Way, Creative District"
+                      className={`w-full rounded-xl border ${errors.address ? "border-danger" : "border-[var(--card-border)]"} bg-[var(--surface-dark)] px-4 py-3.5 pl-11 text-sm text-white focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-muted/40`}
+                    />
+                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted/60" />
+                  </div>
+                  {errors.address && <p className="text-[10px] font-bold text-danger mt-2 uppercase tracking-wide">{errors.address}</p>}
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">
                       City
                     </label>
                     <input
                       type="text"
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
-                      placeholder="Karachi"
-                      className={`w-full rounded-lg border ${errors.city ? "border-danger" : "border-[var(--input-border)]"} bg-[var(--input-bg)] px-4 py-3 text-sm`}
+                      placeholder="New York"
+                      className={`w-full rounded-xl border ${errors.city ? "border-danger" : "border-[var(--card-border)]"} bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-muted/40`}
                     />
-                    {errors.city && <p className="text-xs text-danger mt-1">{errors.city}</p>}
+                    {errors.city && <p className="text-[10px] font-bold text-danger mt-2 uppercase tracking-wide">{errors.city}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">
                       Postal Code
                     </label>
                     <input
                       type="text"
                       value={form.postalCode}
                       onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
-                      placeholder="75100"
-                      className={`w-full rounded-lg border ${errors.postalCode ? "border-danger" : "border-[var(--input-border)]"} bg-[var(--input-bg)] px-4 py-3 text-sm`}
+                      placeholder="10001"
+                      className={`w-full rounded-xl border ${errors.postalCode ? "border-danger" : "border-[var(--card-border)]"} bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-muted/40`}
                     />
-                    {errors.postalCode && <p className="text-xs text-danger mt-1">{errors.postalCode}</p>}
+                    {errors.postalCode && <p className="text-[10px] font-bold text-danger mt-2 uppercase tracking-wide">{errors.postalCode}</p>}
                   </div>
                 </div>
               </div>
 
               {/* Payment Method */}
-              <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">
+              <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white text-sm font-black shadow-lg shadow-primary/20">
                     2
                   </div>
-                  <h2 className="text-lg font-bold">Payment Method</h2>
+                  <h2 className="text-xl font-bold text-white">Payment Method</h2>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("apple")}
-                    className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${
-                      paymentMethod === "apple"
-                        ? "border-primary bg-primary/5"
-                        : "border-[var(--card-border)] hover:border-primary/50"
-                    }`}
-                  >
-                    <Smartphone className="h-6 w-6" />
-                    <span className="text-xs font-medium">Apple Pay</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("paypal")}
-                    className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${
-                      paymentMethod === "paypal"
-                        ? "border-primary bg-primary/5"
-                        : "border-[var(--card-border)] hover:border-primary/50"
-                    }`}
-                  >
-                    <Banknote className="h-6 w-6" />
-                    <span className="text-xs font-medium">PayPal</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("card")}
-                    className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${
-                      paymentMethod === "card"
-                        ? "border-primary bg-primary/5"
-                        : "border-[var(--card-border)] hover:border-primary/50"
-                    }`}
-                  >
-                    <CreditCard className="h-6 w-6" />
-                    <span className="text-xs font-medium">Card</span>
-                  </button>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                  {[
+                    { id: "apple", label: "Apple Pay", icon: Smartphone },
+                    { id: "paypal", label: "PayPal", icon: Wallet },
+                    { id: "card", label: "Credit Card", icon: CreditCard },
+                  ].map((method) => {
+                    const isActive = paymentMethod === method.id;
+                    return (
+                      <button
+                        key={method.id}
+                        type="button"
+                        onClick={() => setPaymentMethod(method.id as any)}
+                        className={`flex items-center sm:flex-col justify-start sm:justify-center gap-4 sm:gap-2 rounded-2xl border-2 p-6 transition-all ${
+                          isActive
+                            ? "border-primary bg-primary/5 ring-4 ring-primary/10"
+                            : "border-[var(--card-border)] bg-[var(--surface-dark)] hover:border-primary/50"
+                        }`}
+                      >
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-full ${isActive ? 'bg-primary text-white' : 'bg-white/5 text-muted'}`}>
+                           <method.icon className="h-5 w-5" />
+                        </div>
+                        <span className={`text-xs font-bold uppercase tracking-wider ${isActive ? 'text-white' : 'text-muted'}`}>{method.label}</span>
+                        {isActive && <CheckCircle2 className="h-4 w-4 text-primary ml-auto sm:hidden" />}
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">
                     Email for Receipt
                   </label>
                   <div className="relative">
@@ -262,37 +262,37 @@ export default function CheckoutPage() {
                       type="email"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      placeholder="john@example.com"
-                      className={`w-full rounded-lg border ${errors.email ? "border-danger" : "border-[var(--input-border)]"} bg-[var(--input-bg)] px-4 py-3 text-sm pl-9`}
+                      placeholder="elena.r@curator.com"
+                      className={`w-full rounded-xl border ${errors.email ? "border-danger" : "border-[var(--card-border)]"} bg-[var(--surface-dark)] px-4 py-3.5 pl-11 text-sm text-white focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-muted/40`}
                     />
-                    <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted/60" />
                   </div>
-                  {errors.email && <p className="text-xs text-danger mt-1">{errors.email}</p>}
+                  {errors.email && <p className="text-[10px] font-bold text-danger mt-2 uppercase tracking-wide">{errors.email}</p>}
                 </div>
               </div>
             </div>
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
-                <h2 className="text-lg font-bold mb-6">Order Summary</h2>
+              <div className="sticky top-24 rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8 shadow-2xl shadow-black/20">
+                <h2 className="text-xl font-bold mb-8 text-white">Order Summary</h2>
 
-                <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
+                <div className="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                   {items.map((item) => (
-                    <div key={item.productId} className="flex gap-3">
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-[var(--surface)]">
+                    <div key={item.productId} className="flex gap-4">
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--surface-dark)] border border-[var(--card-border)]">
                         <Image
                           src={item.image}
                           alt={item.title}
                           fill
                           className="object-cover"
-                          sizes="64px"
+                          sizes="80px"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{item.title}</p>
-                        <p className="text-xs text-muted">Qty: {item.qty}</p>
-                        <p className="text-sm font-bold text-primary">
+                        <p className="text-sm font-bold text-white truncate mb-1">{item.title}</p>
+                        <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-2">Qty: {item.qty}</p>
+                        <p className="text-[15px] font-black text-primary">
                           {formatCurrency(item.price * item.qty)}
                         </p>
                       </div>
@@ -300,33 +300,37 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
-                <div className="space-y-2 border-t border-[var(--card-border)] pt-4 mb-6">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted">Subtotal</span>
-                    <span>{formatCurrency(cartTotal)}</span>
+                <div className="space-y-4 border-t border-[var(--card-border)] pt-8 mb-8">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted">Subtotal</span>
+                    <span className="font-bold text-white/90">{formatCurrency(cartTotal)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted">Shipping</span>
-                    <span className="text-success">Free</span>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted">Shipping</span>
+                    <span className="text-xs font-black text-success uppercase tracking-wider bg-success/10 px-2 py-1 rounded-sm">Complimentary</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted">Tax (5%)</span>
-                    <span>{formatCurrency(cartTotal * 0.05)}</span>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted">Tax (5%)</span>
+                    <span className="font-bold text-white/90">{formatCurrency(cartTotal * 0.05)}</span>
                   </div>
-                  <div className="flex justify-between font-bold text-lg pt-2 border-t border-[var(--card-border)]">
-                    <span>Total</span>
-                    <span className="text-primary">{formatCurrency(cartTotal * 1.05)}</span>
+                  <div className="flex justify-between items-end pt-6 border-t border-[var(--card-border)]">
+                    <span className="text-xs font-black uppercase tracking-widest text-white/40">Total Amount</span>
+                    <span className="text-3xl font-black text-primary leading-none">{formatCurrency(cartTotal * 1.05)}</span>
                   </div>
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-white hover:bg-primary-dark transition-colors btn-glow disabled:opacity-50 shadow-lg shadow-primary/20"
+                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-primary py-5 text-sm font-black uppercase tracking-widest text-white hover:bg-primary-dark transition-all shadow-xl shadow-primary/20 group disabled:opacity-50"
                 >
-                  <Lock className="h-4 w-4" />
-                  {loading ? "Processing..." : "Confirm Order"}
+                  <Lock className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  {loading ? "Confirming..." : "Confirm Order"}
                 </button>
+                
+                <p className="text-[10px] text-center text-muted/60 mt-6 font-medium">
+                  Secure encrypted checkout protocol active.
+                </p>
               </div>
             </div>
           </div>

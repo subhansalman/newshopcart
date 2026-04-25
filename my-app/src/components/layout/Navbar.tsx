@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   Package,
   ChevronDown,
+  Search,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -68,20 +69,28 @@ export default function Navbar() {
             href="/products"
             className="text-sm font-medium text-[var(--foreground)]/70 hover:text-primary transition-colors"
           >
-            Products
+            Atelier
           </Link>
-          {session?.user?.role === "SELLER" && (
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-[var(--foreground)]/70 hover:text-primary transition-colors"
-            >
-              Dashboard
-            </Link>
-          )}
+          <Link
+            href="/products?category=Collections"
+            className="text-sm font-medium text-[var(--foreground)]/70 hover:text-primary transition-colors"
+          >
+            Collections
+          </Link>
         </div>
 
         {/* Right side */}
         <div className="flex items-center gap-3">
+          {/* Search bar */}
+          <div className="hidden lg:flex items-center bg-[var(--input-bg)] rounded-full px-4 py-1.5 border border-[var(--input-border)] mr-2">
+            <Search className="h-4 w-4 text-[var(--muted)]" />
+            <input 
+              type="text" 
+              placeholder="Search curated pieces..." 
+              className="bg-transparent border-none outline-none text-sm ml-2 w-48 text-[var(--foreground)] focus:ring-0"
+            />
+          </div>
+
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
@@ -199,17 +208,15 @@ export default function Navbar() {
               className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--badge-bg)] transition-colors"
               onClick={() => setMobileOpen(false)}
             >
-              Products
+              Atelier
             </Link>
-            {session?.user?.role === "SELLER" && (
-              <Link
-                href="/dashboard"
-                className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--badge-bg)] transition-colors"
-                onClick={() => setMobileOpen(false)}
-              >
-                Dashboard
-              </Link>
-            )}
+            <Link
+              href="/products?category=Collections"
+              className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--badge-bg)] transition-colors"
+              onClick={() => setMobileOpen(false)}
+            >
+              Collections
+            </Link>
             {!session && (
               <Link
                 href="/auth/signin"

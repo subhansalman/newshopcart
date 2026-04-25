@@ -82,9 +82,9 @@ export default function Footer() {
 
           {/* Collections */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">Collections</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4 text-primary-light">Collections</h4>
             <ul className="space-y-2.5">
-              {["Electronics", "Clothing", "Books", "Home & Kitchen", "Sports"].map((item) => (
+              {["The Minimalist", "Abstract Edge", "Sculptural", "Artwork"].map((item) => (
                 <li key={item}>
                   <Link
                     href={`/products?category=${encodeURIComponent(item)}`}
@@ -100,9 +100,9 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">Support</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4 text-primary-light">Information</h4>
             <ul className="space-y-2.5">
-              {["Shipping", "Returns", "FAQ", "Contact Us", "Size Guide"].map((item) => (
+              {["Sustainability", "Privacy", "Returns", "Terms"].map((item) => (
                 <li key={item}>
                   <Link
                     href="#"
@@ -118,7 +118,7 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">Newsletter</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4 text-primary-light">Newsletter</h4>
             <p className="text-sm text-white/60 mb-4">Get updates on new curations and exclusive offers.</p>
             <div className="flex gap-2">
               <input

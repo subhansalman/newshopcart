@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ArrowLeft, Shield, Truck, RotateCcw } from "lucide-react";
+import { Star, ArrowLeft, Shield, Truck, RotateCcw, Check, BadgeCheck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
 import { notFound } from "next/navigation";
@@ -19,10 +19,6 @@ export async function generateMetadata({ params }: ProductPageProps) {
     return {
       title: `${product.title} | ShopCart`,
       description: product.description.slice(0, 160),
-      openGraph: {
-        title: product.title,
-        images: product.images[0] ? [product.images[0]] : [],
-      },
     };
   } catch {
     return { title: "Product" };
@@ -69,6 +65,27 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     // DB not available
   }
 
+  // Fallback product data for UI demonstration if DB is empty
+  if (!product) {
+    product = {
+      id: "f1",
+      title: "Ambar Craftsman Sculptural Vessel",
+      description: "A hand-finished ceramic masterpiece exploring the boundaries of form and shadow. This vessel features a rich tan glaze with a slightly textured surface, perfect for minimalist spaces.",
+      price: 14000,
+      images: ["https://images.unsplash.com/photo-1578500494198-246f612d3b3d?q=80&w=1200"],
+      stock: 5,
+      category: { name: "Sculptural" },
+      seller: { name: "Alex Rivera", image: null },
+      reviews: [],
+    };
+    relatedProducts = [
+      { id: "f2", title: "Monochrome Void Canvas", price: 42000, images: ["https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1200"], category: { name: "Artwork" } },
+      { id: "f3", title: "Ether Silk Lounge Set", price: 28000, images: ["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200"], category: { name: "The Minimalist" } },
+      { id: "f4", title: "Geometric Shadow Table", price: 85000, images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=1200"], category: { name: "Abstract Edge" } },
+      { id: "f5", title: "Celestial Glass Pendant", price: 19500, images: ["https://images.unsplash.com/photo-1543198126-a8ad8e47fb21?q=80&w=1200"], category: { name: "Abstract Edge" } },
+    ];
+  }
+
   if (!product) {
     notFound();
   }
@@ -80,238 +97,200 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-8">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Breadcrumb / Back */}
+        <div className="mb-12">
           <Link
             href="/products"
-            className="flex items-center gap-1 text-sm text-muted hover:text-primary transition-colors"
+            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Products
+            <ArrowLeft className="h-3.5 w-3.5" />
+            BACK TO COLLECTION
           </Link>
-          <span className="text-muted">/</span>
-          <span className="text-sm text-muted">{product.category.name}</span>
-          <span className="text-muted">/</span>
-          <span className="text-sm font-medium truncate">{product.title}</span>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-16 xl:gap-24">
           {/* Image Gallery */}
-          <div className="space-y-4">
-            <div className="relative aspect-square overflow-hidden rounded-2xl bg-[var(--surface)] border border-[var(--card-border)]">
+          <div className="space-y-6">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-[var(--surface-dark)] border border-[var(--card-border)] group">
               <Image
-                src={product.images[0] || "https://picsum.photos/800"}
+                src={product.images[0] || "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?q=80&w=1200"}
                 alt={product.title}
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-1000 group-hover:scale-105"
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
-            {product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-3">
-                {product.images.slice(0, 4).map((img, i) => (
+            
+            <div className="grid grid-cols-4 gap-4">
+              {product.images.length > 0 ? (
+                product.images.slice(0, 4).map((img, i) => (
                   <div
                     key={i}
-                    className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface)] border border-[var(--card-border)] cursor-pointer hover:border-primary transition-colors"
+                    className={`relative aspect-square overflow-hidden rounded-2xl bg-[var(--surface-dark)] border transition-all cursor-pointer hover:border-primary/50 ${i === 0 ? 'border-primary ring-2 ring-primary/20' : 'border-[var(--card-border)]'}`}
                   >
                     <Image
                       src={img}
                       alt={`${product.title} ${i + 1}`}
                       fill
                       className="object-cover"
-                      sizes="25vw"
+                      sizes="15vw"
                     />
                   </div>
-                ))}
-              </div>
-            )}
+                ))
+              ) : (
+                [1,2,3,4].map((i) => (
+                   <div key={i} className="relative aspect-square overflow-hidden rounded-2xl bg-[var(--surface-dark)] border border-[var(--card-border)] cursor-pointer hover:border-primary/50 transition-all">
+                      <Image
+                        src={`https://images.unsplash.com/photo-${1500000000000 + i}?w=400&q=80`}
+                        alt="Placeholder"
+                        fill
+                        className="object-cover"
+                        sizes="15vw"
+                      />
+                   </div>
+                ))
+              )}
+            </div>
           </div>
 
-          {/* Product Info */}
-          <div>
-            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">
-              {product.category.name}
+          {/* Product Details */}
+          <div className="flex flex-col">
+            <p className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-4">
+              {product.category.name.toUpperCase()}
             </p>
-            <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
-
-            {/* Rating */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex items-center gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.round(avgRating)
-                        ? "fill-warning text-warning"
-                        : "fill-none text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-sm font-medium">{avgRating.toFixed(1)}</span>
-              <span className="text-sm text-muted">({product.reviews.length} reviews)</span>
-            </div>
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-white leading-[1.1]">
+              {product.title}
+            </h1>
 
             {/* Price */}
-            <div className="mb-6">
-              <p className="text-3xl font-bold text-primary">
+            <div className="mb-10">
+              <p className="text-4xl font-black text-primary">
                 {formatCurrency(product.price)}
               </p>
             </div>
 
-            {/* Stock */}
-            <div className="mb-6">
-              {product.stock > 0 ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-2.5 w-2.5 rounded-full bg-success animate-pulse" />
-                  <span className="text-sm font-medium text-success">
-                    In Stock ({product.stock} available)
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <div className="h-2.5 w-2.5 rounded-full bg-danger" />
-                  <span className="text-sm font-medium text-danger">Out of Stock</span>
-                </div>
-              )}
-            </div>
-
-            {/* Description */}
+            {/* Color Swatches */}
             <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-2">Description</h3>
-              <p className="text-sm text-muted leading-relaxed">{product.description}</p>
-            </div>
-
-            {/* Tags */}
-            {product.tags.length > 0 && (
-              <div className="mb-8">
-                <h3 className="text-sm font-semibold mb-2">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-[var(--badge-bg)] px-3 py-1 text-xs font-medium"
+               <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-4">Color Palette</p>
+               <div className="flex gap-4">
+                 {['#D2B48C', '#8B4513', '#A0522D', '#DEB887'].map((color, i) => (
+                    <button 
+                      key={i} 
+                      className={`h-10 w-10 rounded-full border-4 transition-all ${i === 0 ? 'border-primary ring-4 ring-primary/10' : 'border-transparent bg-white/5 hover:border-white/20'}`}
+                      style={{ backgroundColor: i === 0 ? color : color }} // Just to match design
                     >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Add to Cart */}
-            <AddToCartButton
-              productId={product.id}
-              title={product.title}
-              price={product.price}
-              image={product.images[0] || "https://picsum.photos/400"}
-              stock={product.stock}
-            />
-
-            {/* Seller */}
-            <div className="mt-6 flex items-center gap-3 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">
-                {product.seller.name[0]?.toUpperCase()}
-              </div>
-              <div>
-                <p className="text-sm font-semibold">Sold by {product.seller.name}</p>
-                <p className="text-xs text-muted">Verified Seller</p>
-              </div>
+                    </button>
+                 ))}
+               </div>
             </div>
 
-            {/* Guarantees */}
-            <div className="mt-6 grid grid-cols-3 gap-3">
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--card-border)] p-3 text-center">
-                <Truck className="h-5 w-5 text-primary" />
-                <p className="text-xs font-medium">Free Shipping</p>
+            {/* Size selection */}
+            <div className="mb-10">
+               <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-4">Atelier Size</p>
+               <div className="flex gap-3">
+                  {['S', 'M', 'L', 'XL'].map((size) => (
+                    <button 
+                      key={size}
+                      className={`h-12 w-14 flex items-center justify-center rounded-xl text-xs font-black transition-all ${size === 'M' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[var(--surface-dark)] border border-[var(--card-border)] text-muted hover:text-white hover:border-white/20'}`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+               </div>
+            </div>
+
+            {/* Add to Wallet */}
+            <div className="mb-12">
+               <AddToCartButton
+                  productId={product.id}
+                  title={product.title}
+                  price={product.price}
+                  image={product.images[0] || "https://picsum.photos/400"}
+                  stock={product.stock}
+               />
+               {product.stock <= 0 && <p className="text-danger text-[10px] font-bold uppercase tracking-widest mt-4 text-center">Awaiting artisan restocking</p>}
+            </div>
+
+            {/* Verified Seller Card */}
+            <div className="mt-auto rounded-2xl border border-[var(--card-border)] bg-[var(--surface-dark)]/50 p-6 flex items-center gap-4">
+              <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-black text-lg border border-primary/20">
+                {product.seller.name[0]?.toUpperCase() || "A"}
               </div>
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--card-border)] p-3 text-center">
-                <Shield className="h-5 w-5 text-primary" />
-                <p className="text-xs font-medium">Secure Payment</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <p className="text-sm font-bold text-white">{product.seller.name}</p>
+                  <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+                </div>
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest">Curator Lead · Verified Studio</p>
               </div>
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--card-border)] p-3 text-center">
-                <RotateCcw className="h-5 w-5 text-primary" />
-                <p className="text-xs font-medium">Easy Returns</p>
-              </div>
+              <button className="text-[10px] font-black text-primary uppercase tracking-widest border border-primary/20 rounded-lg px-4 py-2 hover:bg-primary/5 transition-colors">
+                 PROFILE
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Reviews Section */}
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold mb-8">
-            Customer Reviews ({product.reviews.length})
-          </h2>
-          {product.reviews.length === 0 ? (
-            <div className="text-center py-12 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]">
-              <Star className="h-12 w-12 text-muted mx-auto mb-3" />
-              <p className="text-muted">No reviews yet. Be the first to review!</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {product.reviews.map((review) => (
-                <div
-                  key={review.id}
-                  className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-bold">
-                      {review.user.name[0]?.toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{review.user.name}</p>
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 ${
-                              i < review.rating
-                                ? "fill-warning text-warning"
-                                : "fill-none text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  {review.comment && (
-                    <p className="text-sm text-muted leading-relaxed">{review.comment}</p>
-                  )}
+        {/* Description & Features Sections */}
+        <div className="mt-24 grid lg:grid-cols-2 gap-24 items-start border-t border-[var(--card-border)] pt-24">
+           <div>
+              <h2 className="text-2xl font-bold mb-8 text-white">Narrative & Origin</h2>
+              <div className="prose prose-invert prose-sm max-w-none text-muted leading-relaxed space-y-6">
+                 <p>{product.description}</p>
+                 <p>Every piece in our collection undergoes a rigorous vetting process, ensuring that the visual integrity and functional excellence meet our atelier standards.</p>
+              </div>
+           </div>
+           
+           <div className="space-y-6">
+              {[
+                { title: "Authentic Sourcing", desc: "Direct lineage from established artisans and boutique studios.", icon: Shield },
+                { title: "Global Logistics", desc: "Expert handling and temperature-controlled shipping protocols.", icon: Truck },
+                { title: "Secure Transaction", desc: "Encrypted blockchain-verified payment and escrow systems.", icon: Lock }
+              ].map((feature, i) => (
+                <div key={i} className="flex items-start gap-6 p-6 rounded-2xl bg-primary/5 border border-primary/10 group hover:bg-primary/10 transition-all">
+                   <div className="h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                      <feature.icon className="h-5 w-5 text-primary" />
+                   </div>
+                   <div>
+                      <h3 className="text-sm font-bold text-white mb-2">{feature.title}</h3>
+                      <p className="text-xs text-muted leading-relaxed">{feature.desc}</p>
+                   </div>
                 </div>
               ))}
-            </div>
-          )}
-        </section>
+           </div>
+        </div>
 
-        {/* Related Products */}
+        {/* Related Products Section */}
         {relatedProducts.length > 0 && (
-          <section className="mt-16">
-            <h2 className="text-2xl font-bold mb-8">Related Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((rp) => (
-                <Link key={rp.id} href={`/products/${rp.id}`} className="group">
-                  <div className="product-card rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] overflow-hidden">
-                    <div className="relative aspect-square overflow-hidden bg-[var(--surface)]">
+          <section className="mt-32">
+            <div className="flex items-center justify-between mb-12">
+               <h2 className="text-2xl font-bold text-white">Related Curations</h2>
+               <Link href="/products" className="text-xs font-black text-primary uppercase tracking-widest hover:underline">View All</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {relatedProducts.map((rp, idx) => (
+                <Link key={rp.id} href={`/products/${rp.id}`} className="group block">
+                  <div className="flex flex-col h-full">
+                    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[var(--surface-dark)] mb-4 border border-[var(--card-border)]">
                       <Image
-                        src={rp.images[0] || "https://picsum.photos/400"}
+                        src={rp.images[0] || `https://images.unsplash.com/photo-${1500000000000 + idx}?w=500&q=80`}
                         alt={rp.title}
                         fill
-                        className="product-image object-cover"
-                        sizes="25vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="20vw"
                       />
                     </div>
-                    <div className="p-4">
-                      <p className="text-xs font-medium text-primary uppercase mb-1">
-                        {rp.category.name}
-                      </p>
-                      <h3 className="text-sm font-semibold line-clamp-1 group-hover:text-primary transition-colors">
-                        {rp.title}
-                      </h3>
-                      <p className="text-lg font-bold text-primary mt-1">
-                        {formatCurrency(rp.price)}
-                      </p>
+                    <div className="px-1">
+                      <div className="flex items-start justify-between gap-4 mb-1">
+                         <h3 className="text-sm font-bold text-white truncate group-hover:text-primary transition-colors">
+                           {rp.title}
+                         </h3>
+                         <p className="text-sm font-bold text-primary">
+                           {formatCurrency(rp.price)}
+                         </p>
+                      </div>
+                      <p className="text-[10px] font-black text-muted uppercase tracking-widest">{rp.category.name}</p>
                     </div>
                   </div>
                 </Link>
@@ -324,3 +303,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     </>
   );
 }
+
+const Lock = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+);
