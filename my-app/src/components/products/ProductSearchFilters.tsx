@@ -41,12 +41,19 @@ export default function ProductSearchFilters({
     return `/products?${params.toString()}`;
   };
 
+  const displayCategories = categories.length > 0 ? categories : [
+    { name: "The Minimalist", count: 12 },
+    { name: "Abstract Edge", count: 8 },
+    { name: "Sculptural", count: 15 },
+    { name: "Artwork", count: 4 },
+  ];
+
   return (
     <>
       {/* Mobile filter toggle */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 text-sm font-medium lg:hidden mb-4"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 lg:hidden mb-4"
       >
         <SlidersHorizontal className="h-4 w-4" />
         Filters
@@ -54,57 +61,52 @@ export default function ProductSearchFilters({
 
       <div className={`space-y-8 ${mobileOpen ? "block" : "hidden"} lg:block`}>
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Collections</h3>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Collections</h3>
           <div className="space-y-3">
             <button
               onClick={() => router.push(buildUrl({ category: undefined, page: undefined }))}
-              className={`flex w-full items-center gap-3 cursor-pointer group text-left`}
+              className="flex w-full items-center gap-3 cursor-pointer group text-left"
             >
-              <div className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${!currentCategory ? 'border-primary bg-primary' : 'border-[var(--card-border)] bg-[var(--input-bg)] group-hover:border-primary'}`}>
+              <div className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${!currentCategory ? 'border-primary bg-primary' : 'border-gray-300 bg-white group-hover:border-primary'}`}>
                 <Check className={`h-3 w-3 ${!currentCategory ? 'text-white' : 'text-transparent'}`} />
               </div>
-              <span className={`text-sm font-medium transition-colors ${!currentCategory ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>All Curations</span>
+              <span className={`text-sm font-medium transition-colors ${!currentCategory ? 'text-gray-900' : 'text-gray-600 group-hover:text-gray-900'}`}>All Curations</span>
             </button>
-            
-            {(categories.length > 0 ? categories : [
-              { name: "The Minimalist", count: 12 },
-              { name: "Abstract Edge", count: 8 },
-              { name: "Sculptural", count: 15 },
-              { name: "Artwork", count: 4 }
-            ]).map((cat) => (
+
+            {displayCategories.map((cat) => (
               <button
                 key={cat.name}
                 onClick={() => router.push(buildUrl({ category: cat.name, page: undefined }))}
                 className="flex w-full items-center gap-3 cursor-pointer group text-left"
               >
-                <div className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${currentCategory === cat.name ? 'border-primary bg-primary' : 'border-[var(--card-border)] bg-[var(--input-bg)] group-hover:border-primary'}`}>
+                <div className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${currentCategory === cat.name ? 'border-primary bg-primary' : 'border-gray-300 bg-white group-hover:border-primary'}`}>
                   <Check className={`h-3 w-3 ${currentCategory === cat.name ? 'text-white' : 'text-transparent'}`} />
                 </div>
-                <span className={`text-sm font-medium transition-colors ${currentCategory === cat.name ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>{cat.name}</span>
-                <span className="ml-auto text-[10px] text-muted font-bold">{cat.count}</span>
+                <span className={`text-sm font-medium transition-colors ${currentCategory === cat.name ? 'text-gray-900' : 'text-gray-600 group-hover:text-gray-900'}`}>{cat.name}</span>
+                <span className="ml-auto text-[10px] text-gray-400 font-bold">{cat.count}</span>
               </button>
             ))}
           </div>
         </div>
 
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Price Range</h3>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Price Range</h3>
           <div className="space-y-4">
-            <div className="h-1.5 w-full bg-[var(--surface-dark)] rounded-full overflow-hidden relative">
-              <div className="absolute top-0 left-0 right-0 h-full bg-primary/20 rounded-full"></div>
+            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden relative">
+              <div className="absolute top-0 left-0 w-1/2 h-full bg-primary/30 rounded-full"></div>
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-xs font-medium bg-[var(--surface-dark)] px-3 py-1.5 rounded-lg text-white/60">$0</div>
-              <div className="text-xs font-medium bg-[var(--surface-dark)] px-3 py-1.5 rounded-lg text-white/60">$10k+</div>
+              <div className="text-xs font-medium bg-gray-100 px-3 py-1.5 rounded-lg text-gray-500">$0</div>
+              <div className="text-xs font-medium bg-gray-100 px-3 py-1.5 rounded-lg text-gray-500">$10k+</div>
             </div>
           </div>
         </div>
 
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Class Filter</h3>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Class Filter</h3>
           <div className="flex flex-wrap gap-2">
-            {['Limited Edition', 'Popular Selling', 'New Season'].map((tag) => (
-               <button key={tag} className="rounded-full bg-[var(--surface-dark)] px-3 py-1.5 text-[10px] font-bold tracking-wider text-white/60 uppercase hover:text-white hover:bg-primary/20 transition-all border border-transparent hover:border-primary/20">
+            {['Limited Edition', 'Popular', 'New Season'].map((tag) => (
+               <button key={tag} className="rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-bold tracking-wider text-gray-500 uppercase hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
                  {tag}
                </button>
             ))}
@@ -112,34 +114,30 @@ export default function ProductSearchFilters({
         </div>
 
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Colors</h3>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Colors</h3>
           <div className="flex flex-wrap gap-3">
-            {['#6C63FF', '#4A9FFF', '#FF9800', '#EF4444', '#10B981', '#A0A0B0', '#FFFFFF'].map((color, i) => (
-              <button 
-                key={i} 
-                className={`h-6 w-6 rounded-full flex items-center justify-center border-2 border-transparent hover:border-white/40 transition-all`}
+            {['#6C63FF', '#4A9FFF', '#FF9800', '#EF4444', '#10B981', '#A0A0B0', '#1A1A2E'].map((color, i) => (
+              <button
+                key={i}
+                className="h-6 w-6 rounded-full border-2 border-transparent hover:border-gray-400 transition-all"
                 style={{ backgroundColor: color }}
-              >
-              </button>
+              />
             ))}
           </div>
         </div>
 
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted mb-4">Sizes</h3>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Sizes</h3>
           <div className="flex flex-wrap gap-2">
             {['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
-              <button 
+              <button
                 key={size}
-                className={`h-10 w-10 flex items-center justify-center rounded-lg text-xs font-bold transition-colors bg-[var(--surface-dark)] text-white/60 hover:text-white hover:bg-primary/20`}
+                className="h-10 w-10 flex items-center justify-center rounded-lg text-xs font-bold transition-colors bg-gray-100 text-gray-500 hover:text-primary hover:bg-primary/10"
               >
                 {size}
               </button>
             ))}
           </div>
-          <button className="text-primary text-[10px] font-black uppercase tracking-widest mt-4 hover:underline block">
-            + VIEW ALL SIZES
-          </button>
         </div>
       </div>
     </>
