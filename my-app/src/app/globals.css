@@ -1,26 +1,234 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #6C5CE7;
+  --color-primary-dark: #5A4BD1;
+  --color-primary-light: #A29BFE;
+  --color-accent: #6C5CE7;
+  --color-surface: #F8F7FC;
+  --color-surface-dark: #1A1A2E;
+  --color-muted: #6B7280;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-border: #E5E7EB;
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #ffffff;
+  --foreground: #0D0D1A;
+  --card-bg: #ffffff;
+  --card-border: #E5E7EB;
+  --input-bg: #F9FAFB;
+  --input-border: #D1D5DB;
+  --sidebar-bg: #0D0D1A;
+  --sidebar-text: #A0AEC0;
+  --sidebar-active: #6C5CE7;
+  --toast-bg: #ffffff;
+  --toast-text: #1A1A2E;
+  --toast-border: #E5E7EB;
+  --nav-bg: #ffffff;
+  --nav-border: #E5E7EB;
+  --badge-bg: #F3F4F6;
+  --hero-gradient-start: #6C5CE7;
+  --hero-gradient-end: #A29BFE;
+  --skeleton-base: #E5E7EB;
+  --skeleton-shine: #F3F4F6;
+}
+
+.dark {
+  --background: #0A0A0F;
+  --foreground: #F1F1F3;
+  --card-bg: #16162A;
+  --card-border: #2D2D4A;
+  --input-bg: #1A1A2E;
+  --input-border: #2D2D4A;
+  --sidebar-bg: #07070D;
+  --toast-bg: #16162A;
+  --toast-text: #F1F1F3;
+  --toast-border: #2D2D4A;
+  --nav-bg: #0D0D1A;
+  --nav-border: #1A1A2E;
+  --badge-bg: #1A1A2E;
+  --skeleton-base: #1A1A2E;
+  --skeleton-shine: #2D2D4A;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6C5CE7;
+  border-radius: 3px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-shine) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Focus styles */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #6C5CE7;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
+/* Status badge colors */
+.status-pending { background: #FEF3C7; color: #92400E; }
+.status-paid { background: #DBEAFE; color: #1E40AF; }
+.status-processing { background: #E0E7FF; color: #3730A3; }
+.status-shipped { background: #D1FAE5; color: #065F46; }
+.status-delivered { background: #D1FAE5; color: #065F46; }
+.status-cancelled { background: #FEE2E2; color: #991B1B; }
+
+.dark .status-pending { background: #78350F; color: #FDE68A; }
+.dark .status-paid { background: #1E3A5F; color: #93C5FD; }
+.dark .status-processing { background: #312E81; color: #C7D2FE; }
+.dark .status-shipped { background: #064E3B; color: #6EE7B7; }
+.dark .status-delivered { background: #064E3B; color: #6EE7B7; }
+.dark .status-cancelled { background: #7F1D1D; color: #FCA5A5; }
+
+/* Product card hover */
+.product-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(108, 92, 231, 0.12);
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-image {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button hover glow */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.btn-glow:hover::after {
+  transform: translateX(100%);
+}
+
+/* Order status tracker */
+.status-step {
+  position: relative;
+}
+
+.status-step::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 100%;
+  height: 2px;
+  background: var(--card-border);
+  transform: translateY(-50%);
+}
+
+.status-step:last-child::after {
+  display: none;
+}
+
+.status-step.active::after {
+  background: #6C5CE7;
 }
