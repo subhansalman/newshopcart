@@ -8,37 +8,59 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-2 mb-4">
+            <Link href="/" className="flex items-center gap-2 mb-5">
               <span className="text-xl font-bold">
-                Shop<span className="text-primary-light">Cart</span> Atelier
+                Atelier
               </span>
             </Link>
-            <p className="text-sm text-white/50 leading-relaxed">
+            <p className="text-sm text-white/40 leading-relaxed max-w-xs">
               Defining the future of digital commerce through curated aesthetics and intelligent design.
             </p>
+            {/* Social icons */}
+            <div className="flex items-center gap-3 mt-6">
+              {[
+                { label: "Twitter", icon: "𝕏" },
+                { label: "Instagram", icon: "📷" },
+                { label: "LinkedIn", icon: "in" },
+              ].map((social) => (
+                <a
+                  key={social.label}
+                  href="#"
+                  aria-label={social.label}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white/40 text-sm hover:bg-white/10 hover:text-white/80 transition-all"
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* Support */}
+          {/* Shop */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-5 text-primary-light">Support</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] mb-5 text-white/60">Shop</h4>
             <ul className="space-y-3">
-              {["Shipping", "Returns", "FAQ"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="text-sm text-white/50 hover:text-white transition-colors">
-                    {item}
+              {[
+                { label: "All Products", href: "/products" },
+                { label: "New Arrivals", href: "/products" },
+                { label: "Best Sellers", href: "/products" },
+                { label: "Categories", href: "/products" },
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="text-sm text-white/40 hover:text-white transition-colors">
+                    {item.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Support */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-5 text-primary-light">Legal</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] mb-5 text-white/60">Support</h4>
             <ul className="space-y-3">
-              {["Privacy", "Terms", "Sustainability"].map((item) => (
+              {["Shipping", "Returns", "FAQ", "Contact Us"].map((item) => (
                 <li key={item}>
-                  <Link href="#" className="text-sm text-white/50 hover:text-white transition-colors">
+                  <Link href="#" className="text-sm text-white/40 hover:text-white transition-colors">
                     {item}
                   </Link>
                 </li>
@@ -48,14 +70,17 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-5 text-primary-light">Newsletter</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] mb-5 text-white/60">Stay Updated</h4>
+            <p className="text-sm text-white/40 mb-4 leading-relaxed">
+              Get the latest drops and exclusive offers.
+            </p>
             <div className="flex gap-2">
               <input
                 type="email"
                 placeholder="Your email"
-                className="flex-1 rounded-lg bg-white/10 border border-white/10 px-3 py-2.5 text-sm placeholder:text-white/30 focus:border-primary focus:ring-0 outline-none text-white"
+                className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm placeholder:text-white/25 focus:border-primary/50 focus:ring-0 outline-none text-white transition-colors"
               />
-              <button className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium hover:bg-primary-dark transition-colors">
+              <button className="rounded-xl bg-primary px-5 py-2.5 text-sm font-medium hover:bg-primary-dark transition-colors">
                 Join
               </button>
             </div>
@@ -64,17 +89,17 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-5 sm:px-6 lg:px-8">
-          <p className="text-xs text-white/30">
-            © 2024 SHOPCART ATELIER. ALL RIGHTS RESERVED.
+      <div className="border-t border-white/5">
+        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-5 sm:px-6 lg:px-8">
+          <p className="text-xs text-white/25">
+            © {new Date().getFullYear()} ATELIER. ALL RIGHTS RESERVED.
           </p>
-          <div className="flex gap-6">
-            <Link href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Privacy Policy</Link>
-            <Link href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Terms of Service</Link>
-            <Link href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Shipping</Link>
-            <Link href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Returns</Link>
-            <Link href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Sustainability</Link>
+          <div className="flex items-center gap-6">
+            {["Privacy Policy", "Terms of Service", "Shipping", "Returns"].map((item) => (
+              <Link key={item} href="#" className="text-xs text-white/25 hover:text-white/50 transition-colors">
+                {item}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
