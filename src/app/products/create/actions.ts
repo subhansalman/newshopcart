@@ -19,7 +19,20 @@ export async function createProduct(formData: FormData) {
   const categoryId = formData.get("categoryId") as string;
   const tags = (formData.get("tags") as string).split(",").map((t) => t.trim()).filter(Boolean);
   const imagesRaw = formData.get("images") as string;
-  const images = imagesRaw.split(",").map((u) => u.trim()).filter(Boolean);
+  const imagesManualRaw = formData.get("images_manual") as string;
+  
+  let images: string[] = [];
+  
+  // The hidden 'images' input contains a single Base64 string which natively includes a comma, so we don't split it.
+  if (imagesRaw && imagesRaw.trim() !== "") {
+    images.push(imagesRaw.trim());
+  }
+  
+  // The manual input can contain multiple comma-separated URLs
+  if (imagesManualRaw && imagesManualRaw.trim() !== "") {
+    const manualUrls = imagesManualRaw.split(",").map((u) => u.trim()).filter(Boolean);
+    images = [...images, ...manualUrls];
+  }
 
   if (!title || !description || !price || !categoryId) {
     throw new Error("Missing required fields");
