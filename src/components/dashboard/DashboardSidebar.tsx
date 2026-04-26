@@ -24,6 +24,7 @@ const ADMIN_NAV_ITEMS = [
 const SELLER_NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
+  { label: "Products", href: "/dashboard/products", icon: Package },
   { label: "Favorites", href: "/dashboard/favorites", icon: Star },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
   { label: "Support", href: "/dashboard/support", icon: HelpCircle },
@@ -124,21 +125,14 @@ export default function DashboardSidebar({ userName, userImage, userRole, isOpen
             </div>
           </div>
 
-          {isAdmin ? (
-            <Link
-              href="/products/create"
-              onClick={onClose}
-              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-dark w-full py-3 text-sm font-semibold text-white transition-all btn-premium shadow-lg shadow-primary/20"
-            >
-              <Plus className="h-4 w-4" />
-              New Product
-            </Link>
-          ) : (
-            <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-dark w-full py-3 text-sm font-semibold text-white transition-all btn-premium shadow-lg shadow-primary/20">
-              <Sparkles className="h-4 w-4" />
-              Upgrade to Pro
-            </button>
-          )}
+          <Link
+            href="/products/create"
+            onClick={onClose}
+            className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-dark w-full py-3 text-sm font-semibold text-white transition-all btn-premium shadow-lg shadow-primary/20"
+          >
+            <Plus className="h-4 w-4" />
+            New Product
+          </Link>
         </div>
       </aside>
     </>
