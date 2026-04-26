@@ -16,6 +16,22 @@ export default function CreateProductPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Image must be less than 10MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     if (session && session.user?.role !== "SELLER" && session.user?.role !== "ADMIN") {
@@ -100,14 +116,14 @@ export default function CreateProductPage() {
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Product Name</label>
                     <input name="title" placeholder="e.g. Midnight Silk Blaze" required
-                      className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary outline-none transition-all placeholder:text-muted/40" />
+                      className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-foreground focus:border-primary outline-none transition-all placeholder:text-muted/40" />
                   </div>
                   
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Category</label>
                       <select name="categoryId" required
-                        className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary outline-none transition-all appearance-none cursor-pointer">
+                        className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-foreground focus:border-primary outline-none transition-all appearance-none cursor-pointer">
                         <option value="" className="bg-[var(--card-bg)]">Select category</option>
                         {categories.map((c) => (<option key={c.id} value={c.id} className="bg-[var(--card-bg)]">{c.name}</option>))}
                       </select>
@@ -116,7 +132,7 @@ export default function CreateProductPage() {
                       <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Tags</label>
                       <div className="relative">
                         <input name="tags" placeholder="premium, trending" 
-                          className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary outline-none transition-all placeholder:text-muted/40" />
+                          className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-foreground focus:border-primary outline-none transition-all placeholder:text-muted/40" />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
                           <span className="bg-primary/20 text-primary text-[9px] font-black uppercase px-2 py-0.5 rounded-sm">HOT</span>
                         </div>
@@ -127,7 +143,7 @@ export default function CreateProductPage() {
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Editorial Description</label>
                     <textarea name="description" rows={5} placeholder="Describe the craftsmanship, materials, and the narrative behind this piece..." required
-                      className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary outline-none transition-all resize-none placeholder:text-muted/40" />
+                      className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-foreground focus:border-primary outline-none transition-all resize-none placeholder:text-muted/40" />
                   </div>
                 </div>
               </div>
@@ -142,18 +158,26 @@ export default function CreateProductPage() {
                 </div>
                 
                 <div className="space-y-6">
-                  <div className="border-2 border-dashed border-[var(--card-border)] rounded-2xl p-12 flex flex-col items-center justify-center text-center group hover:border-primary transition-all cursor-pointer bg-[var(--surface-dark)]/50">
-                    <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <Upload className="h-8 w-8 text-primary" />
+                  <label className="border-2 border-dashed border-[var(--card-border)] rounded-2xl p-12 flex flex-col items-center justify-center text-center group hover:border-primary transition-all cursor-pointer bg-[var(--surface-dark)]/50 relative overflow-hidden">
+                    <input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" onChange={handleImageChange} />
+                    {previewImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={previewImage} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                    ) : null}
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        {previewImage ? <Check className="h-8 w-8 text-primary" /> : <Upload className="h-8 w-8 text-primary" />}
+                      </div>
+                      <p className="text-sm font-bold mb-2 uppercase tracking-widest">{previewImage ? "Change Image" : "Click to Upload"}</p>
+                      <p className="text-xs text-muted max-w-[200px]">Drag and drop your high-resolution product imagery (PNG, JPG up to 10MB)</p>
                     </div>
-                    <p className="text-sm font-bold mb-2 uppercase tracking-widest">Click to Upload</p>
-                    <p className="text-xs text-muted max-w-[200px]">Drag and drop your high-resolution product imagery (PNG, JPG up to 10MB)</p>
-                  </div>
+                  </label>
+                  <input type="hidden" name="images" value={previewImage || ""} />
                   
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Manual Image URL</label>
-                    <input name="images" placeholder="https://picsum.photos/800"
-                      className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white focus:border-primary outline-none transition-all placeholder:text-muted/40" />
+                    <input name="images_manual" placeholder="https://picsum.photos/800"
+                      className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-foreground focus:border-primary outline-none transition-all placeholder:text-muted/40" />
                   </div>
                 </div>
               </div>
@@ -174,7 +198,7 @@ export default function CreateProductPage() {
                     <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Base Retail Price (PKR)</label>
                     <div className="relative">
                       <input name="price" type="number" step="0.01" min="1" placeholder="0.00" required
-                        className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 pl-10 text-sm text-white font-bold focus:border-primary outline-none transition-all" />
+                        className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 pl-10 text-sm text-foreground font-bold focus:border-primary outline-none transition-all" />
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold text-sm">$</span>
                     </div>
                   </div>
@@ -192,7 +216,7 @@ export default function CreateProductPage() {
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Stock Quantity</label>
                   <input name="stock" type="number" min="0" defaultValue="10"
-                    className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-white font-bold focus:border-primary outline-none transition-all" />
+                    className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--surface-dark)] px-4 py-3.5 text-sm text-foreground font-bold focus:border-primary outline-none transition-all" />
                 </div>
               </div>
 
